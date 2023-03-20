@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:signing_in_through_otp/home.dart';
+import 'package:signing_in_through_otp/otp.dart';
+import 'package:signing_in_through_otp/phone.dart';
 
 class VerifyPhone {
   var verificationId = ''.obs;
@@ -43,12 +45,18 @@ class VerifyPhone {
             .pushReplacement(MaterialPageRoute(builder: (context) => Home())));
   }
 
-  sendcode() async {
+  sendcode(context, countrycode, number, verify) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: '+44 7123 123 456',
+      phoneNumber: countrycode.text + number,
       verificationCompleted: (PhoneAuthCredential credential) {},
       verificationFailed: (FirebaseAuthException e) {},
-      codeSent: (String verificationId, int? resendToken) {},
+      codeSent: (String verificationId, int? resendToken) {
+        MyPhone.verify = verificationId;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyOtp()),
+        );
+      },
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
   }
